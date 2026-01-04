@@ -1,0 +1,14 @@
+# Ignore Python cache files (for backend)
+__pycache__/
+*.pyc
+
+# Ignore Node.js dependencies (if accidentally added to root)
+node_modules/
+
+# Ignore embedded Git repositories
+frontend/.git
+backend/.git
+
+# Ignore system files
+.DS_Store
+Thumbs.db

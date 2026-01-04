@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: ./backend
+    container_name: yourcooked-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app  # Sync ไฟล์: แก้โค้ดในเครื่อง -> อัปเดตใน Docker ทันที
+    environment:
+      - GOOGLE_API_KEY=YOUR_API_KEY_HERE # เดี๋ยวเราค่อยมาใส่ Key จริงทีหลัง
+
+  frontend:
+    build: ./frontend
+    container_name: yourcooked-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # ป้องกัน node_modules ใน container หาย
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend # ให้ backend รันเสร็จก่อนค่อยรัน frontend
