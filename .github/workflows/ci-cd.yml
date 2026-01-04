@@ -1,0 +1,51 @@
+name: YourCooked-ai CI/CD Pipeline
+
+# ทำงานเมื่อมีการ push เข้า branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # Job 1: ตรวจสอบฝั่ง Backend
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install Dependencies
+      working-directory: ./backend
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    # (Optional) ตรงนี้ถ้ามี Test ก็สั่ง pytest ได้
+    # - name: Run Tests
+    #   run: pytest
+
+  # Job 2: ตรวจสอบฝั่ง Frontend
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+        
+    - name: Install Dependencies
+      working-directory: ./frontend
+      run: npm ci
+      
+    - name: Build Next.js
+      working-directory: ./frontend
+      run: npm run build
