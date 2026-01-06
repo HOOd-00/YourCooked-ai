@@ -1,13 +1,12 @@
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import os
 import json
 from PIL import Image
 import io
 
 # set API key from env
-genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
-
-model = genai.GenerativeModel('gemini-2.5-flash')
+client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY"))
 
 def analyze_image_from_bytes(image_bytes):
     try:
@@ -33,12 +32,16 @@ def analyze_image_from_bytes(image_bytes):
         Do not create markdown blocks (like ```json). Just return the raw JSON string.
         """
 
-        # 3. sending prompt + image
-        response = model.generate_content([prompt, image])
-        print(f'response: {response}')
-        content = response.content
+        # 3. caling model and sending prompt + image
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=[prompt, image],
+            config=types.GenerateContentConfig(
+                response_mime_type='application/json'
+            )
+        )
 
-        return json.loads(content)
+        return json.loads(response.text)
 
     # callback
     except Exception as e:
