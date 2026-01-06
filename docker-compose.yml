@@ -7,7 +7,7 @@ services:
     volumes:
       - ./backend:/app  # Sync ไฟล์: แก้โค้ดในเครื่อง -> อัปเดตใน Docker ทันที
     environment:
-      - GOOGLE_API_KEY=YOUR_API_KEY_HERE # เดี๋ยวเราค่อยมาใส่ Key จริงทีหลัง
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
 
   frontend:
     build: ./frontend

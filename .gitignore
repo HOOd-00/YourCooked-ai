@@ -9,6 +9,8 @@ node_modules/
 frontend/.git
 backend/.git
 
+.env*
+
 # Ignore system files
 .DS_Store
 Thumbs.db
