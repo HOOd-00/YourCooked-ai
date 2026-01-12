@@ -1,24 +1,41 @@
 "use client"; 
 
 import { useState } from "react";
-import { Upload, ChefHat, Utensils, Loader2 } from "lucide-react";
+import { Upload, ChefHat, Utensils, Loader2, Section } from "lucide-react";
 import { analyzeImage, AnalyzeResponse } from "./lib/api";
+import Header from "./components/Header";
+import ImageUpload from "./components/ImageUpload";
+
+type AppState = "upload" | "options" | "recipes" | "calories";
 
 export default function Home() {
+  const [appState, setAppState] = useState<AppState>("upload")
   const [image, setImage] = useState<File | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalyzeResponse | null>(null);
 
-  // ฟังก์ชันจัดการเมื่อเลือกรูป
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file)); // สร้าง URL จำลองเพื่อแสดงรูป Preview
-      setResult(null); // ล้างผลลัพธ์เก่า
-    }
+  const handleImageUpload = (file: File, preview: string) => {
+    setUploadedImage(preview);
+    setAppState("options");
   };
+
+  const handleClearImage = () => {
+    setUploadedImage(null);
+    setAppState("upload");
+  };
+
+  const handleSelectOption = (option: "recipes" | "calories") => {
+    setAppState(option);
+  }
+
+  const handleBack = () => {
+    setImage(null);
+    setPreview(null);
+    setResult(null);
+    setAppState("upload");
+  }
 
   // ฟังก์ชันส่งรูปไป Backend
   const handleSubmit = async () => {
@@ -26,9 +43,7 @@ export default function Home() {
 
     setLoading(true);
     try {
-      //เรียกใช้ Service บรรทัดเดียวจบ! สะอาดมาก
       const data = await analyzeImage(image);
-      console.log('response: ', data);
       setResult(data);
     } catch (error) {
       console.log(error);
@@ -39,63 +54,52 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 p-8 font-sans">
-      <div className="max-w-4xl mx-auto space-y-8">
-        
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-extrabold text-gray-900 flex items-center justify-center gap-3">
-            <ChefHat className="w-10 h-10 text-orange-500" />
-            SnapCook AI
-          </h1>
-          <p className="text-gray-500">
-            ถ่ายรูปวัตถุดิบในตู้เย็น แล้วให้ AI คิดเมนูให้คุณ!
-          </p>
-        </div>
+    <main className="min-h-screen gradient-warm">
+      <Header />
+      <div className="max-w-4xl mx-auto py-8">
+        {/* Hero Section */}
+        {appState === 'upload' && (
+          <section className="py-8 mb-8">
+            <div className="text-center animate-slide-up">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 leading-tight">
+                  Cooking,{" "}
+                  <span className="text-primary">with Your AI Cook</span>
+              </h1>
+              <p className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto">
+                Upload a photo of your ingredients and let AI suggest
+                delicious recipes or track your calories with activity
+                recommendations!
+              </p>
+              <div className="flex flex-wrap gap-4 justify-center">
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary text-sm">
+                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-secondary-foreground font-medium">
+                      Instant Recipe Ideas
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary text-sm">
+                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                    <span className="text-secondary-foreground font-medium">
+                      Calorie Tracking
+                    </span>
+                  </div>
+                </div>
+            </div>
+          </section>
+        )}
 
         {/* Upload Section */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex flex-col items-center gap-4">
-            {/* Preview Area */}
-            {preview ? (
-              <div className="relative w-full max-w-md h-64 rounded-xl overflow-hidden bg-gray-100 border-2 border-dashed border-gray-300">
-                <img src={preview} alt="Preview" className="w-full h-full object-contain" />
-                <button 
-                  onClick={() => { setImage(null); setPreview(null); setResult(null); }}
-                  className="absolute top-2 right-2 bg-white/80 p-1 rounded-full text-red-500 hover:bg-white"
-                >
-                  ✕
-                </button>
+        <section className="py-8">
+            {appState === "upload" && (
+              <div className="animate-slide-up animation-delay-300">
+                <ImageUpload 
+                  onImageUpload={handleImageUpload}
+                  uploadedImage={uploadedImage}
+                  onClear={handleClearImage}
+                />
               </div>
-            ) : (
-              // Upload Button UI
-              <label className="w-full max-w-md h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                <Upload className="w-12 h-12 text-gray-400 mb-2" />
-                <span className="text-gray-500 font-medium">Click to upload ingredients</span>
-                <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-              </label>
             )}
-
-            {/* Analyze Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={!image || loading}
-              className={`px-8 py-3 rounded-full font-bold text-white transition-all transform ${
-                !image || loading
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-orange-500 hover:bg-orange-600 hover:scale-105 shadow-lg"
-              }`}
-            >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 className="w-5 h-5 animate-spin" /> Thinking...
-                </span>
-              ) : (
-                "Create Recipes 🍳"
-              )}
-            </button>
-          </div>
-        </div>
+        </section>
 
         {/* Results Section */}
         {result && (
