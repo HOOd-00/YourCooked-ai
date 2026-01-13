@@ -22,8 +22,8 @@ def analyze_image_from_bytes(image_bytes):
             Return ONLY a valid JSON object (no markdown, no backticks) matching this exact structure:
             {
                 "ingredients": [
-                    { "name": "Item1 Name (unit e.g. 2 medium)", "calories": e.g. 44 },
-                    { "name": "Item2 Name (unit e.g. 1 cup)", "calories": e.g. 13 },
+                    { "name": "Item1 Name", "unit": "e.g. 2 medium", "calories": e.g. 44 },
+                    { "name": "Item2 Name, "unit": "e.g. 1 cup", "calories": e.g. 13 },
                 ],
                 "recipes": [
                     {
