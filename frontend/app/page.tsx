@@ -23,11 +23,11 @@ export default function Home() {
     setImage(file);
     setUploadedImage(preview);
     setLoading(true);
+    setAppState("options");
     
     try {
       const data = await analyzeImage(file);
       setResult(data);
-      setAppState("options");
     } catch (error) {
       console.error(error);
       alert("เกิดข้อผิดพลาดในการวิเคราะห์รูปภาพ");
@@ -133,21 +133,39 @@ export default function Home() {
                 </div>
                 { loading ? (
                   <div className="max-w-md mx-auto ">
-                    <span className="flex items-center justify-center gap-2">
+                    <span className="flex items-center justify-center gap-2 text-muted-foreground">
                       <Loader2 className="w-5 h-5 animate-spin" /> Thinking...
                     </span>
                   </div>
               ) : (
-                  <OptionSelector onSelectOption={handleSelectOption} />
+                  <div>
+                    <div className="flex flex-wrap mb-8 gap-2 justify-center">
+                      {result?.ingredients.map((item, index) => (
+                        <div className="flex items-center px-4 py-2 rounded-full bg-secondary text-sm">
+                          <span className="text-secondary-foreground font-small">
+                            {item.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <OptionSelector onSelectOption={handleSelectOption} />
+                  </div>
                 )}
               </div>
             )}
 
             {appState === "recipes" && result && 
-              <RecipeCard recipeResults={result.recipes} onBack={handleBack} 
+              <RecipeCard 
+                recipeResults={result.recipes} 
+                onBack={handleBack} 
             />} 
 
-            {appState === "calories" && <CalorieDisplay onBack={handleBack} />}
+            {appState === "calories" && result &&
+              <CalorieDisplay 
+                ingredientResults={result.ingredients} 
+                activityResults={result.activity} 
+                onBack={handleBack} 
+            />}
           </section>
         </main>
         <footer className="py-6 text-center text-sm text-muted-foreground border-t border-border">

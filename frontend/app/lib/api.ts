@@ -1,5 +1,11 @@
 const API_BASE_URL = "http://localhost:8000";
 
+export interface Ingredients {
+    name: string;
+    unit: string;
+    calories: number;
+}
+
 export interface Recipe {
   name: string;
   cookTime: string;
@@ -19,7 +25,7 @@ export interface Activity {
 }
 
 export interface AnalyzeResponse {
-    ingredients: string[];
+    ingredients: Ingredients[];
     recipes: Recipe[];
     activity: Activity[];
     error?: string[];

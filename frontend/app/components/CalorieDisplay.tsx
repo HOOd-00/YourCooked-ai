@@ -1,64 +1,72 @@
 import React from "react";
-import { Flame, Bike, PersonStanding, Dumbbell, Waves, Clock } from "lucide-react";
+import { Flame, PersonStanding, Clock, Dumbbell } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "./card";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
+import { Ingredients, Activity } from "../lib/api";
 
-interface Activity {
-  name: string;
-  icon: React.ReactNode;
-  duration: string;
-  caloriesBurned: number;
-  intensity: "Low" | "Medium" | "High";
-}
+// const activities: Activity[] = [
+//   {
+//     name: "Walking",
+//     icon: <PersonStanding className="w-6 h-6" />,
+//     duration: "45 min",
+//     caloriesBurned: 150,
+//     intensity: "Low",
+//   },
+//   {
+//     name: "Cycling",
+//     icon: <Bike className="w-6 h-6" />,
+//     duration: "30 min",
+//     caloriesBurned: 250,
+//     intensity: "Medium",
+//   },
+//   {
+//     name: "Swimming",
+//     icon: <Waves className="w-6 h-6" />,
+//     duration: "25 min",
+//     caloriesBurned: 300,
+//     intensity: "Medium",
+//   },
+//   {
+//     name: "Weight Training",
+//     icon: <Dumbbell className="w-6 h-6" />,
+//     duration: "40 min",
+//     caloriesBurned: 200,
+//     intensity: "High",
+//   },
+// ];
 
-const activities: Activity[] = [
-  {
-    name: "Walking",
-    icon: <PersonStanding className="w-6 h-6" />,
-    duration: "45 min",
-    caloriesBurned: 150,
-    intensity: "Low",
-  },
-  {
-    name: "Cycling",
-    icon: <Bike className="w-6 h-6" />,
-    duration: "30 min",
-    caloriesBurned: 250,
-    intensity: "Medium",
-  },
-  {
-    name: "Swimming",
-    icon: <Waves className="w-6 h-6" />,
-    duration: "25 min",
-    caloriesBurned: 300,
-    intensity: "Medium",
-  },
-  {
-    name: "Weight Training",
-    icon: <Dumbbell className="w-6 h-6" />,
-    duration: "40 min",
-    caloriesBurned: 200,
-    intensity: "High",
-  },
-];
-
-const foodItems = [
-  { name: "Tomatoes (2 medium)", calories: 44 },
-  { name: "Bell Peppers (1 cup)", calories: 46 },
-  { name: "Garlic (3 cloves)", calories: 13 },
-  { name: "Olive Oil (1 tbsp)", calories: 119 },
-  { name: "Onion (1 medium)", calories: 44 },
-  { name: "Fresh Herbs", calories: 5 },
-];
-
-const totalCalories = foodItems.reduce((sum, item) => sum + item.calories, 0);
+// const foodItems = [
+//   { name: "Tomatoes (2 medium)", calories: 44 },
+//   { name: "Bell Peppers (1 cup)", calories: 46 },
+//   { name: "Garlic (3 cloves)", calories: 13 },
+//   { name: "Olive Oil (1 tbsp)", calories: 119 },
+//   { name: "Onion (1 medium)", calories: 44 },
+//   { name: "Fresh Herbs", calories: 5 },
+// ];
 
 interface CalorieDisplayProps {
-  onBack: () => void;
+    ingredientResults: Ingredients[] | null;
+    activityResults: Activity[] | null;
+    onBack: () => void;
 }
 
-export default function CalorieDisplay({ onBack } : CalorieDisplayProps ) {
+export default function CalorieDisplay({ 
+    ingredientResults, 
+    activityResults, 
+    onBack 
+} : CalorieDisplayProps ) {
+
+    const activities = activityResults;
+    const foodItems = ingredientResults;
+    const totalCalories = React.useMemo(() => {
+        if (!foodItems) return 0
+
+        return foodItems.reduce(
+            (sum, item) => sum + item.calories, 0
+        )
+    }, [foodItems])
+
     const getIntensityColor = (intensity: string) => {
         switch (intensity) {
         case "Low":
@@ -104,12 +112,12 @@ export default function CalorieDisplay({ onBack } : CalorieDisplayProps ) {
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-3">
-                        {foodItems.map((item, index) => (
+                        {foodItems?.map((item, index) => (
                         <div
                             key={index}
                             className="flex items-center justify-between py-2 border-b border-border last:border-0"
                         >
-                            <span className="text-foreground">{item.name}</span>
+                            <span className="text-foreground">{item.name}{" "}({item.unit})</span>
                             <span className="font-semibold text-primary">
                             {item.calories} kcal
                             </span>
@@ -131,7 +139,7 @@ export default function CalorieDisplay({ onBack } : CalorieDisplayProps ) {
             </h3>
 
         <div className="grid sm:grid-cols-2 gap-4">
-          {activities.map((activity, index) => (
+          {activities?.map((activity, index) => (
             <Card
                 key={index}
                 variant="activity"
@@ -143,7 +151,8 @@ export default function CalorieDisplay({ onBack } : CalorieDisplayProps ) {
                 <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                         <div className="p-3 rounded-xl bg-accent/10 text-accent">
-                            {activity.icon}
+                            {/* {activity.icon} */}
+                            <Dumbbell className="w-6 h-6"/>
                         </div>
                         <div className="flex-1">
                             <div className="flex items-center justify-between mb-1">
