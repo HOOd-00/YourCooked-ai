@@ -1,14 +1,27 @@
 const API_BASE_URL = "http://localhost:8000";
 
-interface Recipe {
+export interface Recipe {
+  name: string;
+  cookTime: string;
+  servings: number;
+  calories: number;
+  difficulty: "Easy" | "Medium" | "Hard";
+  ingredients: string[];
+  steps: string[];
+}
+
+export interface Activity {
     name: string;
-    instructions: string;
-    calories: string;
+    icon: string;
+    duration: string;
+    caloriesBurned: number,
+    intensity: "Easy" | "Medium" | "Hard";
 }
 
 export interface AnalyzeResponse {
     ingredients: string[];
     recipes: Recipe[];
+    activity: Activity[];
     error?: string[];
 }
 

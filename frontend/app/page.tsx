@@ -19,9 +19,22 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalyzeResponse | null>(null);
 
-  const handleImageUpload = (file: File, preview: string) => {
+  const handleImageUpload = async (file: File, preview: string) => {
+    setImage(file);
     setUploadedImage(preview);
-    setAppState("options");
+    setLoading(true);
+    
+    try {
+      const data = await analyzeImage(file);
+      setResult(data);
+      setAppState("options");
+    } catch (error) {
+      console.error(error);
+      alert("เกิดข้อผิดพลาดในการวิเคราะห์รูปภาพ");
+      setAppState("upload");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClearImage = () => {
@@ -102,7 +115,7 @@ export default function Home() {
                 </div>
               )}
 
-            {/* Option & Preview State */}
+            {/* Preview & Options State */}
             {appState === "options" && uploadedImage && (
               <div>
                 <div className="max-w-md mx-auto">
@@ -118,11 +131,21 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <OptionSelector onSelectOption={handleSelectOption} />
+                { loading ? (
+                  <div className="max-w-md mx-auto ">
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" /> Thinking...
+                    </span>
+                  </div>
+              ) : (
+                  <OptionSelector onSelectOption={handleSelectOption} />
+                )}
               </div>
             )}
 
-            {appState === "recipes" && <RecipeCard onBack={handleBack} />} 
+            {appState === "recipes" && result && 
+              <RecipeCard recipeResults={result.recipes} onBack={handleBack} 
+            />} 
 
             {appState === "calories" && <CalorieDisplay onBack={handleBack} />}
           </section>

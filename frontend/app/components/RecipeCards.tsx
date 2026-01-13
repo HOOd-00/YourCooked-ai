@@ -10,99 +10,91 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "../components/card";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
+import { Recipe } from "../lib/api";
 
-interface Recipe {
-  id: number;
-  name: string;
-  image: string;
-  cookTime: string;
-  servings: number;
-  calories: number;
-  difficulty: "Easy" | "Medium" | "Hard";
-  ingredients: string[];
-  steps: string[];
-}
+const mockImgUrl = "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop"
 
-const mockRecipes: Recipe[] = [
-  {
-    id: 1,
-    name: "Mediterranean Veggie Bowl",
-    image:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
-    cookTime: "25 min",
-    servings: 2,
-    calories: 380,
-    difficulty: "Easy",
-    ingredients: [
-      "Mixed vegetables",
-      "Olive oil",
-      "Feta cheese",
-      "Quinoa",
-      "Lemon juice",
-    ],
-    steps: [
-      "Cook quinoa according to package instructions",
-      "Roast vegetables with olive oil at 400°F for 20 mins",
-      "Combine quinoa and roasted vegetables",
-      "Top with crumbled feta and drizzle with lemon juice",
-      "Season with salt, pepper, and herbs",
-    ],
-  },
-  {
-    id: 2,
-    name: "Fresh Garden Stir-Fry",
-    image:
-      "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&h=300&fit=crop",
-    cookTime: "15 min",
-    servings: 3,
-    calories: 290,
-    difficulty: "Easy",
-    ingredients: [
-      "Bell peppers",
-      "Broccoli",
-      "Garlic",
-      "Soy sauce",
-      "Sesame oil",
-    ],
-    steps: [
-      "Heat sesame oil in a large wok over high heat",
-      "Add minced garlic and stir for 30 seconds",
-      "Add vegetables and stir-fry for 5-7 minutes",
-      "Add soy sauce and toss to coat",
-      "Serve immediately over rice or noodles",
-    ],
-  },
-  {
-    id: 3,
-    name: "Rustic Vegetable Soup",
-    image:
-      "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop",
-    cookTime: "35 min",
-    servings: 4,
-    calories: 220,
-    difficulty: "Medium",
-    ingredients: [
-      "Tomatoes",
-      "Onions",
-      "Carrots",
-      "Vegetable broth",
-      "Italian herbs",
-    ],
-    steps: [
-      "Sauté onions and garlic in olive oil until soft",
-      "Add chopped carrots and cook for 5 minutes",
-      "Add tomatoes and vegetable broth, bring to boil",
-      "Reduce heat and simmer for 25 minutes",
-      "Season with herbs, salt, and pepper to taste",
-    ],
-  },
-];
+// const mockRecipes: Recipe[] = [
+//   {
+//     id: 1,
+//     name: "Mediterranean Veggie Bowl",
+//     image:
+//       "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
+//     cookTime: "25 min",
+//     servings: 2,
+//     calories: 380,
+//     difficulty: "Easy",
+//     ingredients: [
+//       "Mixed vegetables",
+//       "Olive oil",
+//       "Feta cheese",
+//       "Quinoa",
+//       "Lemon juice",
+//     ],
+//     steps: [
+//       "Cook quinoa according to package instructions",
+//       "Roast vegetables with olive oil at 400°F for 20 mins",
+//       "Combine quinoa and roasted vegetables",
+//       "Top with crumbled feta and drizzle with lemon juice",
+//       "Season with salt, pepper, and herbs",
+//     ],
+//   },
+//   {
+//     id: 2,
+//     name: "Fresh Garden Stir-Fry",
+//     image:
+//       "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400&h=300&fit=crop",
+//     cookTime: "15 min",
+//     servings: 3,
+//     calories: 290,
+//     difficulty: "Easy",
+//     ingredients: [
+//       "Bell peppers",
+//       "Broccoli",
+//       "Garlic",
+//       "Soy sauce",
+//       "Sesame oil",
+//     ],
+//     steps: [
+//       "Heat sesame oil in a large wok over high heat",
+//       "Add minced garlic and stir for 30 seconds",
+//       "Add vegetables and stir-fry for 5-7 minutes",
+//       "Add soy sauce and toss to coat",
+//       "Serve immediately over rice or noodles",
+//     ],
+//   },
+//   {
+//     id: 3,
+//     name: "Rustic Vegetable Soup",
+//     image:
+//       "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop",
+//     cookTime: "35 min",
+//     servings: 4,
+//     calories: 220,
+//     difficulty: "Medium",
+//     ingredients: [
+//       "Tomatoes",
+//       "Onions",
+//       "Carrots",
+//       "Vegetable broth",
+//       "Italian herbs",
+//     ],
+//     steps: [
+//       "Sauté onions and garlic in olive oil until soft",
+//       "Add chopped carrots and cook for 5 minutes",
+//       "Add tomatoes and vegetable broth, bring to boil",
+//       "Reduce heat and simmer for 25 minutes",
+//       "Season with herbs, salt, and pepper to taste",
+//     ],
+//   },
+// ];
 
 interface RecipeCardProps {
+    recipeResults: Recipe[] | null; 
     onBack: () => void;
 }
 
-export default function RecipeCard({ onBack } : RecipeCardProps) {
+export default function RecipeCard({ recipeResults, onBack } : RecipeCardProps) {
     const [expandedRecipe, setExpandedRecipe] = useState<number | null>(null);
 
     const getDifficultyColor = (difficulty: string) => {
@@ -118,6 +110,18 @@ export default function RecipeCard({ onBack } : RecipeCardProps) {
         }
     };
 
+    // fall back
+    if (!recipeResults || recipeResults.length === 0) {
+        return (
+            <div className="text-center py-8">
+                <p className="text-muted-foreground">No recipes found, please try again</p>
+                <Button variant="outline" onClick={onBack} className="mt-4">
+                    Go Back
+                </Button>
+            </div>
+        );
+    }
+
     return (
         <div className="w-full max-w-4xl mx-auto">
             <div className="text-center mb-8 animate-slide-up">
@@ -130,9 +134,9 @@ export default function RecipeCard({ onBack } : RecipeCardProps) {
             </div>
 
             `<div className="grid md:grid-cols-3 gap-6">
-                {mockRecipes.map((recipe, index) => (
+                {recipeResults.map((recipe, index) => (
                 <Card
-                    key={recipe.id}
+                    key={index}
                     variant="recipe"
                     className={cn(
                     "overflow-hidden animate-slide-up",
@@ -141,7 +145,7 @@ export default function RecipeCard({ onBack } : RecipeCardProps) {
                 >
                     <div className="relative h-40 overflow-hidden">
                         <img
-                            src={recipe.image}
+                            src={mockImgUrl}
                             alt={recipe.name}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                         />
@@ -152,7 +156,7 @@ export default function RecipeCard({ onBack } : RecipeCardProps) {
                                 getDifficultyColor(recipe.difficulty)
                             )}
                             >
-                            {recipe.difficulty}
+                                {recipe.difficulty}
                             </span>
                         </div>
                     </div>
@@ -175,29 +179,29 @@ export default function RecipeCard({ onBack } : RecipeCardProps) {
                         </div>
                         <div className="flex items-center gap-1 text-primary font-medium">
                             <Flame className="w-4 h-4" />
-                            <span>{recipe.calories} cal</span>
+                            <span>{recipe.calories}</span>
                         </div>
                     </div>
 
                     <button
                         onClick={() =>
                         setExpandedRecipe(
-                            expandedRecipe === recipe.id ? null : recipe.id
+                            expandedRecipe === index ? null : index
                         )
                         } className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                     >
                         <Utensils className="w-4 h-4" />
                         <span>
-                        {expandedRecipe === recipe.id ? "Hide Steps" : "View Steps"}
+                        {expandedRecipe === index ? "Hide Steps" : "View Steps"}
                         </span>
-                        {expandedRecipe === recipe.id ? (
+                        {expandedRecipe === index ? (
                         <ChevronUp className="w-4 h-4" />
                         ) : (
                         <ChevronDown className="w-4 h-4" />
                         )}
                     </button>
 
-                    {expandedRecipe === recipe.id && (
+                    {expandedRecipe === index && (
                         <div className="mt-4 pt-4 border-t border-border animate-fade-in">
                             <h4 className="font-semibold text-sm mb-2">Ingredients:</h4>
                             <ul className="text-sm text-muted-foreground mb-4 space-y-1">
