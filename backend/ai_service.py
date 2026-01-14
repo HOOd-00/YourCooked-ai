@@ -17,7 +17,7 @@ def analyze_image_from_bytes(image_bytes):
         prompt = """
             Analyze this image to identify food ingredients. 
             Based on these ingredients, suggest 3 healthy and creative recipes.
-            Also, suggest physical activities that would help burn off the calories from these meals.
+            Also, suggest physical activities that would help burn off the calories from these ingredients.
 
             Return ONLY a valid JSON object (no markdown, no backticks) matching this exact structure:
             {
