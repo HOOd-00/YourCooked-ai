@@ -1,13 +1,14 @@
 "use client"; 
 
 import { useState } from "react";
-import { Upload, ChefHat, Utensils, Loader2, Section, Heading1, Divide } from "lucide-react";
+import { Loader2} from "lucide-react";
 import { analyzeImage, AnalyzeResponse } from "./lib/api";
 import Header from "./components/Header";
 import ImageUpload from "./components/ImageUpload";
 import OptionSelector from "./components/OptionSelector";
 import RecipeCard from "./components/RecipeCards";
 import CalorieDisplay from "./components/CalorieDisplay";
+import { ViewToggle } from "./components/viewToggle";
 
 type AppState = "upload" | "options" | "recipes" | "calories";
 
@@ -44,6 +45,10 @@ export default function Home() {
 
   const handleSelectOption = (option: "recipes" | "calories") => {
     setAppState(option);
+  }
+
+  const handleViewToggle = (view: "recipes" | "calories") => {
+    setAppState(view);
   }
 
   const handleBack = () => {
@@ -141,7 +146,10 @@ export default function Home() {
                   <div>
                     <div className="flex flex-wrap mb-8 gap-2 justify-center">
                       {result?.ingredients.map((item, index) => (
-                        <div className="flex items-center px-4 py-2 rounded-full bg-secondary text-sm">
+                        <div 
+                          key={`${item.name}-${item.calories}`}
+                          className="flex items-center px-4 py-2 rounded-full bg-secondary text-sm"
+                        >
                           <span className="text-secondary-foreground font-small">
                             {item.name}
                           </span>
@@ -154,18 +162,26 @@ export default function Home() {
               </div>
             )}
 
-            {appState === "recipes" && result && 
-              <RecipeCard 
-                recipeResults={result.recipes} 
-                onBack={handleBack} 
-            />} 
-
-            {appState === "calories" && result &&
-              <CalorieDisplay 
-                ingredientResults={result.ingredients} 
-                activityResults={result.activity} 
-                onBack={handleBack} 
-            />}
+            {/* View Toggle */}
+            {(appState === "recipes" || appState === "calories") && (
+              <>
+                <ViewToggle activeView={appState} onToggle={handleViewToggle} />
+                {/* Generate Recipes */}
+                {appState === "recipes" && result && 
+                  <RecipeCard 
+                    recipeResults={result.recipes} 
+                    onBack={handleBack} 
+                />} 
+    
+                {/* Count Calories */}
+                {appState === "calories" && result &&
+                  <CalorieDisplay 
+                    ingredientResults={result.ingredients} 
+                    activityResults={result.activity} 
+                    onBack={handleBack} 
+                />}
+              </>
+            )}
           </section>
         </main>
         <footer className="py-6 text-center text-sm text-muted-foreground border-t border-border">

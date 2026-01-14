@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-border: hsl(var(--border));
   --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--color-card-foreground));
+  --color-card-foreground: hsl(var(--card-foreground));
 
-  
+
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
 
@@ -197,4 +197,12 @@
 
 .card {
   padding: 2em;
+}
+
+.activity-gradient {
+  background: linear-gradient(
+    to bottom right,
+    hsl(var(--card)),
+    hsl(var(--secondary) / 0.3)
+  );
 }

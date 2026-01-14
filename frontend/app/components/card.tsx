@@ -11,7 +11,7 @@ const cardVariants = cva(
         elevated: "shadow-soft hover:shadow-medium",
         glass: "bg-card/60 backdrop-blur-md border-border/50",
         recipe: "shadow-card hover:shadow-medium hover:scale-[1.02] cursor-pointer",
-        activity: "bg-gradient-to-br from-card to-secondary/30 shadow-soft",
+        activity: "activity-gradient shadow-soft",
       },
     },
     defaultVariants: {

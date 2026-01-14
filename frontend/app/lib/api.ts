@@ -9,8 +9,8 @@ export interface Ingredients {
 export interface Recipe {
   name: string;
   cookTime: string;
-  servings: number;
-  calories: number;
+  servings: string;
+  calories: string;
   difficulty: "Easy" | "Medium" | "Hard";
   ingredients: string[];
   steps: string[];

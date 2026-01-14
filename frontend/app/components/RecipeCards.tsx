@@ -10,6 +10,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "../components/card";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
+import { parseCalories } from "../lib/parseCalories";
 import { Recipe } from "../lib/api";
 
 const mockImgUrl = "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop"
@@ -132,17 +133,19 @@ export default function RecipeCard({ recipeResults, onBack } : RecipeCardProps) 
                 Based on your ingredients, here are 3 delicious ideas
                 </p>
             </div>
+            <div className="grid md:grid-cols-3 gap-6">
+                {recipeResults.map((recipe, index) => {
+                    const {calories, suffix} = parseCalories(recipe.calories);
 
-            `<div className="grid md:grid-cols-3 gap-6">
-                {recipeResults.map((recipe, index) => (
-                <Card
-                    key={index}
-                    variant="recipe"
-                    className={cn(
-                    "overflow-hidden animate-slide-up",
-                    `animation-delay-${(index + 1) * 100}`
-                    )}
-                >
+                    return (
+                    <Card
+                        key={index}
+                        variant="recipe"
+                        className={cn(
+                        "overflow-hidden animate-slide-up",
+                        `animation-delay-${(index + 1) * 100}`
+                        )}
+                    >
                     <div className="relative h-40 overflow-hidden">
                         <img
                             src={mockImgUrl}
@@ -168,18 +171,23 @@ export default function RecipeCard({ recipeResults, onBack } : RecipeCardProps) 
                     </CardHeader>
 
                     <CardContent>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                    <div className="flex items-start gap-4 text-sm text-muted-foreground mt-1 mb-4">
                         <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
                             <span>{recipe.cookTime}</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <Users className="w-4 h-4" />
-                            <span>{recipe.servings}</span>
+                            <span>{recipe.servings.split(" ")[0]}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-primary font-medium">
-                            <Flame className="w-4 h-4" />
-                            <span>{recipe.calories}</span>
+                        <div className="flex items-start gap-1 text-primary">
+                            <Flame className="w-4 h-4 shrink-0" />
+                            <div className="flex flex-col leading-tight">
+                                <span className="font-medium">{calories}</span>
+                                {suffix && (
+                                    <span className="text-xs text-muted-foreground">({suffix})</span>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -228,7 +236,7 @@ export default function RecipeCard({ recipeResults, onBack } : RecipeCardProps) 
                     )}
                     </CardContent>
                 </Card>
-                ))}
+                )})}
             </div>
 
             <div className="mt-8 text-center">
