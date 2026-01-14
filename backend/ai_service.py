@@ -15,22 +15,38 @@ def analyze_image_from_bytes(image_bytes):
 
         # 2. set prompt
         prompt = """
-        Analyze this image. Identify all food ingredients visible. 
-        Based on these ingredients, suggest 3 creative recipes. 
+            Analyze this image to identify food ingredients. 
+            Based on these ingredients, suggest 3 healthy and creative recipes.
+            Also, suggest physical activities that would help burn off the calories from these meals.
 
-        Return ONLY a valid JSON object with this structure:
-        {
-            "ingredients": ["item1", "item2"],
-            "recipes": [
-                {
-                    "name": "Recipe Name",
-                    "instructions": "Brief step-by-step instructions",
-                    "calories": "Estimated calories"
-                }
-            ]
-        }
-        Do not create markdown blocks (like ```json). Just return the raw JSON string.
-        """
+            Return ONLY a valid JSON object (no markdown, no backticks) matching this exact structure:
+            {
+                "ingredients": [
+                    { "name": "Item1 Name", "unit": "e.g. 2 medium", "calories": e.g. 44 },
+                    { "name": "Item2 Name, "unit": "e.g. 1 cup", "calories": e.g. 13 },
+                ],
+                "recipes": [
+                    {
+                        "name": "Recipe Name",
+                        "cookTime": "e.g. 15 min",
+                        "servings": "e.g. 2",
+                        "calories": "e.g. 450 kcal, 200 cal",
+                        "difficulty": "Easy/Medium/Hard",
+                        "ingredients": ["List", "of", "ingredients", "for", "this", "recipe"],
+                        "steps": ["Step 1...", "Step 2...", "Step 3..."]
+                    }
+                ],
+                "activity": [
+                    {
+                        "name": "Activity Name (e.g. Running, Yoga)",
+                        "icon": "Lucide Icon Name (e.g. Footprints, Dumbbell, Bike, Flame, PersonStanding)",
+                        "duration": "e.g. 30 min",
+                        "caloriesBurned": 200,
+                        "intensity": "Low/Medium/High"
+                    }
+                ]
+            }
+            """
 
         # 3. caling model and sending prompt + image
         response = client.models.generate_content(
@@ -46,4 +62,9 @@ def analyze_image_from_bytes(image_bytes):
     # callback
     except Exception as e:
         print(f"Error calling Gemini: {e}")
-        return {"error": str(e)}
+        return {
+            "error": str(e),
+            "ingredients": [], 
+            "recipes": [],
+            "activity": []
+        }

@@ -1,0 +1,119 @@
+{
+  "ingredients": [
+    "Ground Pork",
+    "Thai Basil",
+    "Minced Garlic",
+    "Red Chilies",
+    "Egg",
+    "Cooking Oil",
+    "Soy Sauce",
+    "Fish Sauce",
+    "Salt"
+  ],
+  "recipes": [
+    {
+      "name": "Spicy Thai Basil Pork Stir-fry (Pad Kra Pao Style)",
+      "cookTime": "20 mins",
+      "servings": "2 servings",
+      "calories": "480 kcal",
+      "difficulty": "Easy",
+      "ingredients": [
+        "300g Ground Pork",
+        "1 cup Thai Basil leaves",
+        "2 tbsp Minced Garlic",
+        "1-2 Red Chilies, chopped (adjust to taste)",
+        "1 tbsp Cooking Oil",
+        "1 tbsp Soy Sauce",
+        "1 tbsp Fish Sauce",
+        "1/2 tsp Salt (optional)",
+        "Pinch of sugar (optional)"
+      ],
+      "steps": [
+        "Heat cooking oil in a wok or large pan over medium-high heat.",
+        "Add minced garlic and chopped red chilies. Stir-fry until fragrant (about 30 seconds).",
+        "Add ground pork and break it apart. Cook until browned and cooked through, about 5-7 minutes.",
+        "Drain any excess fat if desired.",
+        "Stir in soy sauce, fish sauce, salt (if using), and sugar (if using). Cook for 1 minute, ensuring pork is well coated.",
+        "Remove from heat and stir in Thai basil leaves until just wilted.",
+        "Serve hot, optionally with rice and a fried egg (not included in calorie count)."
+      ]
+    },
+    {
+      "name": "Lean Pork & Basil Lettuce Wraps with Chili Kick",
+      "cookTime": "25 mins",
+      "servings": "2 servings",
+      "calories": "350 kcal",
+      "difficulty": "Medium",
+      "ingredients": [
+        "300g Lean Ground Pork",
+        "1 cup Thai Basil leaves, roughly chopped",
+        "1 tbsp Minced Garlic",
+        "1 Red Chili, finely chopped",
+        "1 tsp Cooking Oil",
+        "2 tbsp Fish Sauce",
+        "1 tbsp Soy Sauce",
+        "Salt to taste (optional)",
+        "Large lettuce leaves (e.g., butter lettuce, iceberg) for serving"
+      ],
+      "steps": [
+        "Heat cooking oil in a large pan over medium heat.",
+        "Add minced garlic and chopped red chili. Sauté until fragrant, about 1 minute.",
+        "Add ground pork, breaking it up with a spoon. Cook until thoroughly browned and all liquid has evaporated, about 8-10 minutes.",
+        "Drain any excess fat. Stir in fish sauce and soy sauce, cooking for another 2 minutes until absorbed.",
+        "Remove from heat and stir in the chopped Thai basil leaves.",
+        "Taste and add salt if needed. Let the mixture cool slightly.",
+        "To serve, spoon the pork mixture into individual lettuce leaves and wrap them up."
+      ]
+    },
+    {
+      "name": "Chili Basil Pork & Scrambled Egg Stir-fry",
+      "cookTime": "15 mins",
+      "servings": "1 serving",
+      "calories": "420 kcal",
+      "difficulty": "Easy",
+      "ingredients": [
+        "150g Ground Pork",
+        "1 Egg",
+        "1/2 cup Thai Basil leaves",
+        "1 tbsp Minced Garlic",
+        "1 Red Chili, chopped",
+        "1 tbsp Cooking Oil",
+        "1 tbsp Soy Sauce",
+        "1 tsp Fish Sauce",
+        "Pinch of salt and pepper for egg"
+      ],
+      "steps": [
+        "Whisk the egg with a pinch of salt and pepper in a small bowl.",
+        "Heat 1/2 tbsp cooking oil in a pan over medium heat. Pour in the whisked egg and scramble until just set but still moist. Remove from pan and set aside.",
+        "Add the remaining 1/2 tbsp cooking oil to the same pan. Add minced garlic and chopped red chili; stir-fry until fragrant (about 30 seconds).",
+        "Add ground pork and cook, breaking it apart, until browned and cooked through (about 5-7 minutes).",
+        "Stir in soy sauce and fish sauce. Cook for 1 minute.",
+        "Return the scrambled egg to the pan. Add Thai basil leaves and stir everything together gently until basil is just wilted.",
+        "Serve immediately."
+      ]
+    }
+  ],
+  "activity": [
+    {
+      "name": "Running",
+      "icon": "Footprints",
+      "duration": "35 min",
+      "caloriesBurned": 400,
+      "intensity": "High"
+    },
+    {
+      "name": "Cycling",
+      "icon": "Bike",
+      "duration": "45 min",
+      "caloriesBurned": 450,
+      "intensity": "Medium"
+    },
+    {
+      "name": "Strength Training",
+      "icon": "Dumbbell",
+      "duration": "60 min",
+      "caloriesBurned": 380,
+      "intensity": "Medium"
+    }
+  ]
+} 

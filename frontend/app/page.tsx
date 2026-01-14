@@ -1,65 +1,194 @@
-import Image from "next/image";
+"use client"; 
+
+import { useState } from "react";
+import { Loader2} from "lucide-react";
+import { analyzeImage, AnalyzeResponse } from "./lib/api";
+import Header from "./components/Header";
+import ImageUpload from "./components/ImageUpload";
+import OptionSelector from "./components/OptionSelector";
+import RecipeCard from "./components/RecipeCards";
+import CalorieDisplay from "./components/CalorieDisplay";
+import { ViewToggle } from "./components/viewToggle";
+
+type AppState = "upload" | "options" | "recipes" | "calories";
 
 export default function Home() {
+  const [appState, setAppState] = useState<AppState>("upload")
+  const [image, setImage] = useState<File | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<AnalyzeResponse | null>(null);
+
+  const handleImageUpload = async (file: File, preview: string) => {
+    setImage(file);
+    setUploadedImage(preview);
+    setLoading(true);
+    setAppState("options");
+    
+    try {
+      const data = await analyzeImage(file);
+      setResult(data);
+    } catch (error) {
+      console.error(error);
+      alert("เกิดข้อผิดพลาดในการวิเคราะห์รูปภาพ");
+      setAppState("upload");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClearImage = () => {
+    setUploadedImage(null);
+    setAppState("upload");
+  };
+
+  const handleSelectOption = (option: "recipes" | "calories") => {
+    setAppState(option);
+  }
+
+  const handleViewToggle = (view: "recipes" | "calories") => {
+    setAppState(view);
+  }
+
+  const handleBack = () => {
+    setUploadedImage(null);
+    setAppState("upload");
+  }
+
+  // ฟังก์ชันส่งรูปไป Backend
+  const handleSubmit = async () => {
+    if (!image) return;
+
+    setLoading(true);
+    try {
+      const data = await analyzeImage(image);
+      setResult(data);
+    } catch (error) {
+      console.log(error);
+      alert("เกิดข้อผิดพลาดในการวิเคราะห์รูปภาพ");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="min-h-screen gradient-warm">
+      <Header />
+        <main className="container max-w-4xl mx-auto py-8">
+          {/* Hero Section */}
+          {appState === 'upload' && (
+            <section className="py-8 mb-8">
+              <div className="text-center animate-slide-up">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 leading-tight">
+                    Cooking,{" "}
+                    <span className="text-primary">with Your AI Cook</span>
+                </h1>
+                <p className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto">
+                  Upload a photo of your ingredients and let AI suggest
+                  delicious recipes or track your calories with activity
+                  recommendations!
+                </p>
+                <div className="flex flex-wrap gap-4 justify-center">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary text-sm">
+                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      <span className="text-secondary-foreground font-medium">
+                        Instant Recipe Ideas
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary text-sm">
+                      <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                      <span className="text-secondary-foreground font-medium">
+                        Calorie Tracking
+                      </span>
+                    </div>
+                  </div>
+              </div>
+            </section>
+          )}
+
+          {/* Content Section */}
+          <section className="py-8">
+            {/* Upload State */}
+              {appState === "upload" && (
+                <div className="animate-slide-up animation-delay-300">
+                  <ImageUpload 
+                    onImageUpload={handleImageUpload}
+                    uploadedImage={uploadedImage}
+                    onClear={handleClearImage}
+                  />
+                </div>
+              )}
+
+            {/* Preview & Options State */}
+            {appState === "options" && uploadedImage && (
+              <div>
+                <div className="max-w-md mx-auto">
+                  <div className="relative rounded-2xl overflow-hidden shadow-medium mb-8 animate-scale-in">
+                    <img 
+                      src={uploadedImage} 
+                      alt="Uploaded Ingredients" 
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-charcoal/50 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-primary-foreground">
+                      <p className="text-sm font-medium">Image uploaded successfully</p>
+                    </div>
+                  </div>
+                </div>
+                { loading ? (
+                  <div className="max-w-md mx-auto ">
+                    <span className="flex items-center justify-center gap-2 text-muted-foreground">
+                      <Loader2 className="w-5 h-5 animate-spin" /> Thinking...
+                    </span>
+                  </div>
+              ) : (
+                  <div>
+                    <div className="flex flex-wrap mb-8 gap-2 justify-center">
+                      {result?.ingredients.map((item, index) => (
+                        <div 
+                          key={`${item.name}-${item.calories}`}
+                          className="flex items-center px-4 py-2 rounded-full bg-secondary text-sm"
+                        >
+                          <span className="text-secondary-foreground font-small">
+                            {item.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <OptionSelector onSelectOption={handleSelectOption} />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* View Toggle */}
+            {(appState === "recipes" || appState === "calories") && (
+              <>
+                <ViewToggle activeView={appState} onToggle={handleViewToggle} />
+                {/* Generate Recipes */}
+                {appState === "recipes" && result && 
+                  <RecipeCard 
+                    recipeResults={result.recipes} 
+                    onBack={handleBack} 
+                />} 
+    
+                {/* Count Calories */}
+                {appState === "calories" && result &&
+                  <CalorieDisplay 
+                    ingredientResults={result.ingredients} 
+                    activityResults={result.activity} 
+                    onBack={handleBack} 
+                />}
+              </>
+            )}
+          </section>
+        </main>
+        <footer className="py-6 text-center text-sm text-muted-foreground border-t border-border">
+            <p>
+              YourCooked &copy; 2025 — AI-Powered Food Analysis.
+            </p>
+        </footer>
     </div>
   );
 }
